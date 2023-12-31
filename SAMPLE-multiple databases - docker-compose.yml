@@ -1,0 +1,28 @@
+version: '3.9'
+
+services:
+  redis:
+    image: redis:latest
+    restart: always
+    volumes:
+      - ./redis-data:/data
+    ports:
+      - "6381:6381"
+
+  postgres:
+    image: postgres:16
+    restart: always
+    environment:
+      - POSTGRES_PASSWORD=postgres
+      - POSTGRES_MULTIPLE_DATABASES=somedata:somedata123,somedatatest:somedatatest123
+    ports:
+      - "5432:5432"
+    volumes:
+      - ./init-postgres:/docker-entrypoint-initdb.d
+      - ./postgres-data:/var/lib/postgresql/data
+
+volumes:
+  redis-data:
+    driver: local
+  postgres-data:
+    driver: local

@@ -1,0 +1,43 @@
+version: '3.9'
+
+services:
+  redis:
+    image: redis:latest
+    restart: always
+    volumes:
+      - ./redis-data:/data
+    ports:
+      - "6391:6381"
+
+  postgres:
+    image: postgres:16
+    restart: always
+    environment:
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=postgres
+    ports:
+      - "5442:5432"
+    volumes:
+      - ./init-postgres:/docker-entrypoint-initdb.d
+      - ./postgres-data:/var/lib/postgresql/data
+
+  postgres-gis:
+    build: 
+      context: ./postgis
+      dockerfile: Dockerfile
+    restart: always
+    environment:
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=postgres
+    ports:
+      - "5444:5432"
+    volumes:
+      - ./postgres-gis-data:/var/lib/postgresql/data
+
+volumes:
+  redis-data:
+    driver: local
+  postgres-data:
+    driver: local
+  postgres-gis-data:
+    driver: local
