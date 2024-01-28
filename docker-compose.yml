@@ -15,6 +15,11 @@ services:
     environment:
       - POSTGRES_USER=postgres
       - POSTGRES_PASSWORD=postgres
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres -d postgres"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
     ports:
       - "5442:5432"
     volumes:
@@ -22,7 +27,7 @@ services:
       - ./postgres-data:/var/lib/postgresql/data
 
   postgres-gis:
-    build: 
+    build:
       context: ./postgis
       dockerfile: Dockerfile
     restart: always
